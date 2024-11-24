@@ -101,6 +101,12 @@ function App() {
     }
   };
 
+  const handleToggleComplete = (taskId: number) => {
+    setTasks(tasks.map(task =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    ));
+  };
+
   const incompleteTasks = getFirstIncompleteTasks();
   const currentTask = incompleteTasks[currentTaskIndex];
 
@@ -131,6 +137,7 @@ function App() {
             onReorder={handleReorder}
             onEdit={handleEditTask}
             onDelete={handleDeleteTask}
+            onToggleComplete={handleToggleComplete}
           />
         ) : (
           currentTask && (

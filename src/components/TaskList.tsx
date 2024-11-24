@@ -8,9 +8,10 @@ interface TaskListProps {
   onReorder: (tasks: Task[]) => void;
   onEdit: (task: Task) => void;
   onDelete: (taskId: number) => void;
+  onToggleComplete: (taskId: number) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder, onEdit, onDelete }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder, onEdit, onDelete, onToggleComplete }) => {
   const groupedTasks = tasks.reduce((acc, task) => {
     if (!acc[task.group]) {
       acc[task.group] = [];
@@ -74,9 +75,12 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder, onEdit, onDelete 
                             <p className="text-gray-400 text-sm">{task.duration}</p>
                           </div>
                           {task.completed && (
-                            <span className="text-green-400 text-sm px-2 py-1 bg-green-400/10 rounded-full">
+                            <button
+                              onClick={() => onToggleComplete(task.id)}
+                              className="text-green-400 text-sm px-2 py-1 bg-green-400/10 hover:bg-green-400/20 rounded-full transition-colors cursor-pointer"
+                            >
                               Completed
-                            </span>
+                            </button>
                           )}
                           <div className="flex gap-2">
                             <button
