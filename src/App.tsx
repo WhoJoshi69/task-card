@@ -25,17 +25,24 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showList, setShowList] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [availableGroups, setAvailableGroups] = useState<string[]>(() => {
+    const savedGroups = localStorage.getItem('taskGroups');
+    return savedGroups ? JSON.parse(savedGroups) : ['Educational', 'Entertainment', 'Financial', 'Skin Care'];
+  });
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
 
+  useEffect(() => {
+    localStorage.setItem('taskGroups', JSON.stringify(availableGroups));
+  }, [availableGroups]);
+
   // Get first incomplete task from each group
   const getFirstIncompleteTasks = () => {
-    const groups: Task['group'][] = ['Educational', 'Entertainment', 'Financial', 'Skin Care'];
     const firstIncompleteTasks: Task[] = [];
 
-    groups.forEach(group => {
+    availableGroups.forEach(group => {
       const firstIncomplete = tasks.find(task => 
         task.group === group && !task.completed
       );
@@ -88,6 +95,12 @@ function App() {
     setTasks(tasks.filter(task => task.id !== taskId));
   };
 
+  const handleAddGroup = (newGroup: string) => {
+    if (!availableGroups.includes(newGroup)) {
+      setAvailableGroups(prev => [...prev, newGroup]);
+    }
+  };
+
   const incompleteTasks = getFirstIncompleteTasks();
   const currentTask = incompleteTasks[currentTaskIndex];
 
@@ -138,6 +151,8 @@ function App() {
           }}
           onAddTask={handleAddTask}
           taskToEdit={taskToEdit}
+          availableGroups={availableGroups}
+          onAddGroup={handleAddGroup}
         />
       </div>
     </div>

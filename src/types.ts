@@ -5,5 +5,5 @@ export interface Task {
   imageUrl: string;
   quickLink?: string;
   completed: boolean;
-  group: 'Educational' | 'Entertainment' | 'Financial' | 'Skin Care';
+  group: string;
 }

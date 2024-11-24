@@ -7,14 +7,17 @@ interface AddTaskModalProps {
   onClose: () => void;
   onAddTask: (task: Omit<Task, 'id'>) => void;
   taskToEdit: Task | null;
+  availableGroups: string[];
+  onAddGroup: (group: string) => void;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask, taskToEdit }) => {
+const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask, taskToEdit, availableGroups, onAddGroup }) => {
   const [title, setTitle] = useState('');
   const [duration, setDuration] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [group, setGroup] = useState<Task['group']>('Educational');
   const [quickLink, setQuickLink] = useState('');
+  const [newGroup, setNewGroup] = useState('');
 
   useEffect(() => {
     if (taskToEdit) {
@@ -45,7 +48,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
     setQuickLink('');
   };
 
-  const groups: Task['group'][] = ['Educational', 'Entertainment', 'Financial', 'Skin Care'];
+  const handleAddGroup = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (newGroup.trim()) {
+      onAddGroup(newGroup.trim());
+      setGroup(newGroup.trim());
+      setNewGroup('');
+    }
+  };
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
@@ -86,7 +96,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             >
-              {groups.map((groupOption) => (
+              {availableGroups.map((groupOption) => (
                 <option key={groupOption} value={groupOption}>
                   {groupOption}
                 </option>
@@ -132,6 +142,23 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
               placeholder="https://..."
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={newGroup}
+              onChange={(e) => setNewGroup(e.target.value)}
+              placeholder="New group name"
+              className="flex-1 px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              type="button"
+              onClick={handleAddGroup}
+              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors"
+            >
+              Add Group
+            </button>
           </div>
 
           <button
