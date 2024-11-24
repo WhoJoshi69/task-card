@@ -3,6 +3,7 @@ export interface Task {
   title: string;
   duration: string;
   imageUrl: string;
+  quickLink?: string;
   completed: boolean;
   group: 'Educational' | 'Entertainment' | 'Financial' | 'Skin Care';
 }

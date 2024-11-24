@@ -14,6 +14,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
   const [duration, setDuration] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [group, setGroup] = useState<Task['group']>('Educational');
+  const [quickLink, setQuickLink] = useState('');
 
   useEffect(() => {
     if (taskToEdit) {
@@ -21,6 +22,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
       setDuration(taskToEdit.duration);
       setImageUrl(taskToEdit.imageUrl);
       setGroup(taskToEdit.group);
+      setQuickLink(taskToEdit.quickLink || '');
     }
   }, [taskToEdit]);
 
@@ -32,6 +34,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
       title,
       duration,
       imageUrl,
+      quickLink: quickLink || undefined,
       completed: false,
       group,
     });
@@ -39,6 +42,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
     setDuration('');
     setImageUrl('');
     setGroup('Educational');
+    setQuickLink('');
   };
 
   const groups: Task['group'][] = ['Educational', 'Entertainment', 'Financial', 'Skin Care'];
@@ -114,6 +118,19 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
               onChange={(e) => setImageUrl(e.target.value)}
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-1">
+              Quick Link (Optional)
+            </label>
+            <input
+              type="url"
+              value={quickLink}
+              onChange={(e) => setQuickLink(e.target.value)}
+              placeholder="https://..."
+              className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 

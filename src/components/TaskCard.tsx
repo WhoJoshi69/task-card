@@ -53,10 +53,8 @@ const TaskCard: React.FC<TaskCardProps> = ({
         </motion.h3>
 
         <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.4 }}
-          className="relative mb-8"
+          onClick={() => task.quickLink && window.open(task.quickLink, '_blank')}
+          className={`relative mb-8 ${task.quickLink ? 'cursor-pointer' : ''}`}
         >
           <img
             src={task.imageUrl}
