@@ -13,11 +13,15 @@ interface AddTaskModalProps {
 
 const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask, taskToEdit, availableGroups, onAddGroup }) => {
   const [title, setTitle] = useState('');
-  const [duration, setDuration] = useState('');
+  const [duration, setDuration] = useState('1 hour');
   const [imageUrl, setImageUrl] = useState('');
   const [group, setGroup] = useState<Task['group']>('Educational');
   const [quickLink, setQuickLink] = useState('');
   const [newGroup, setNewGroup] = useState('');
+
+  const getRandomUnsplashImage = () => {
+    return `https://source.unsplash.com/random/800x600/?productivity,work,study`;
+  };
 
   useEffect(() => {
     if (taskToEdit) {
@@ -35,14 +39,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
     e.preventDefault();
     onAddTask({
       title,
-      duration,
-      imageUrl,
+      duration: duration || '1 hour',
+      imageUrl: imageUrl || getRandomUnsplashImage(),
       quickLink: quickLink || undefined,
       completed: false,
       group,
     });
     setTitle('');
-    setDuration('');
+    setDuration('1 hour');
     setImageUrl('');
     setGroup('Educational');
     setQuickLink('');
@@ -120,14 +124,14 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask,
 
           <div>
             <label className="block text-sm font-medium text-gray-200 mb-1">
-              Image URL
+              Image URL (Optional)
             </label>
             <input
               type="url"
               value={imageUrl}
               onChange={(e) => setImageUrl(e.target.value)}
+              placeholder="Leave empty for random image"
               className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              required
             />
           </div>
 
