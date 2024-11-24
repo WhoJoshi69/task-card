@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Clock, CheckCircle, ArrowRight, Plus } from 'lucide-react';
+import { Clock, CheckCircle, ArrowRight, Plus, List } from 'lucide-react';
 import TaskCard from './components/TaskCard';
 import AddTaskModal from './components/AddTaskModal';
+import TaskList from './components/TaskList';
 import { Task } from './types';
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showList, setShowList] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -64,6 +66,10 @@ function App() {
     setIsModalOpen(false);
   };
 
+  const handleReorder = (reorderedTasks: Task[]) => {
+    setTasks(reorderedTasks);
+  };
+
   const incompleteTasks = getFirstIncompleteTasks();
   const currentTask = incompleteTasks[currentTaskIndex];
 
@@ -72,21 +78,33 @@ function App() {
       <div className="max-w-2xl w-full">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Task Manager</h1>
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 transition-colors"
-          >
-            <Plus size={24} />
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowList(!showList)}
+              className="bg-purple-500 hover:bg-purple-600 text-white rounded-full p-2 transition-colors"
+            >
+              <List size={24} />
+            </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="bg-blue-500 hover:bg-blue-600 text-white rounded-full p-2 transition-colors"
+            >
+              <Plus size={24} />
+            </button>
+          </div>
         </div>
 
-        {currentTask && (
-          <TaskCard
-            task={currentTask}
-            onMarkCompleted={handleMarkCompleted}
-            onNextTask={handleNextTask}
-            totalTasks={incompleteTasks.length}
-          />
+        {showList ? (
+          <TaskList tasks={tasks} onReorder={handleReorder} />
+        ) : (
+          currentTask && (
+            <TaskCard
+              task={currentTask}
+              onMarkCompleted={handleMarkCompleted}
+              onNextTask={handleNextTask}
+              totalTasks={incompleteTasks.length}
+            />
+          )
         )}
 
         <AddTaskModal
