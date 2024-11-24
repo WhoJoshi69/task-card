@@ -54,14 +54,23 @@ const TaskCard: React.FC<TaskCardProps> = ({
 
         <motion.div
           onClick={() => task.quickLink && window.open(task.quickLink, '_blank')}
-          className={`relative mb-8 ${task.quickLink ? 'cursor-pointer' : ''}`}
+          className={`relative mb-8 h-[400px] overflow-hidden rounded-xl flex items-center justify-center bg-gray-900/30 ${
+            task.quickLink ? 'cursor-pointer' : ''
+          }`}
         >
           <img
             src={task.imageUrl}
             alt={task.title}
-            className="w-full h-[400px] object-cover rounded-xl"
+            className="h-full w-auto object-contain"
+            onLoad={(e) => {
+              const img = e.target as HTMLImageElement;
+              const isPortrait = img.naturalHeight > img.naturalWidth;
+              img.className = isPortrait 
+                ? 'h-full w-auto object-contain'
+                : 'w-full h-full object-cover';
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent rounded-xl" />
+          <div className="absolute inset-0 bg-gradient-to-t from-gray-900/50 to-transparent" />
         </motion.div>
 
         <motion.div
