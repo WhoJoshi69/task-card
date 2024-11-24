@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import { Task } from '../types';
-import { GripVertical } from 'lucide-react';
+import { GripVertical, Pencil, Trash2 } from 'lucide-react';
 
 interface TaskListProps {
   tasks: Task[];
   onReorder: (tasks: Task[]) => void;
+  onEdit: (task: Task) => void;
+  onDelete: (taskId: number) => void;
 }
 
-const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder }) => {
+const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder, onEdit, onDelete }) => {
   const groupedTasks = tasks.reduce((acc, task) => {
     if (!acc[task.group]) {
       acc[task.group] = [];
@@ -76,6 +78,20 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, onReorder }) => {
                               Completed
                             </span>
                           )}
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => onEdit(task)}
+                              className="p-2 text-blue-400 hover:bg-blue-400/10 rounded-lg transition-colors"
+                            >
+                              <Pencil className="w-4 h-4" />
+                            </button>
+                            <button
+                              onClick={() => onDelete(task.id)}
+                              className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </div>
                         </div>
                       )}
                     </Draggable>

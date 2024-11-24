@@ -23,6 +23,7 @@ function App() {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showList, setShowList] = useState(false);
+  const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -61,13 +62,29 @@ function App() {
     );
   };
 
-  const handleAddTask = (newTask: Omit<Task, 'id'>) => {
-    setTasks(prev => [...prev, { ...newTask, id: Date.now() }]);
+  const handleAddTask = (taskData: Omit<Task, 'id'>) => {
+    if (taskToEdit) {
+      setTasks(prev => prev.map(task => 
+        task.id === taskToEdit.id ? { ...taskData, id: taskToEdit.id } : task
+      ));
+      setTaskToEdit(null);
+    } else {
+      setTasks(prev => [...prev, { ...taskData, id: Date.now() }]);
+    }
     setIsModalOpen(false);
   };
 
   const handleReorder = (reorderedTasks: Task[]) => {
     setTasks(reorderedTasks);
+  };
+
+  const handleEditTask = (taskToEdit: Task) => {
+    setTaskToEdit(taskToEdit);
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteTask = (taskId: number) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
   };
 
   const incompleteTasks = getFirstIncompleteTasks();
@@ -95,7 +112,12 @@ function App() {
         </div>
 
         {showList ? (
-          <TaskList tasks={tasks} onReorder={handleReorder} />
+          <TaskList
+            tasks={tasks}
+            onReorder={handleReorder}
+            onEdit={handleEditTask}
+            onDelete={handleDeleteTask}
+          />
         ) : (
           currentTask && (
             <TaskCard
@@ -109,8 +131,12 @@ function App() {
 
         <AddTaskModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setTaskToEdit(null);
+          }}
           onAddTask={handleAddTask}
+          taskToEdit={taskToEdit}
         />
       </div>
     </div>

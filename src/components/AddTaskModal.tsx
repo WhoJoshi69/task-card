@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 import { Task } from '../types';
 
@@ -6,13 +6,23 @@ interface AddTaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onAddTask: (task: Omit<Task, 'id'>) => void;
+  taskToEdit: Task | null;
 }
 
-const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask }) => {
+const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask, taskToEdit }) => {
   const [title, setTitle] = useState('');
   const [duration, setDuration] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [group, setGroup] = useState<Task['group']>('Educational');
+
+  useEffect(() => {
+    if (taskToEdit) {
+      setTitle(taskToEdit.title);
+      setDuration(taskToEdit.duration);
+      setImageUrl(taskToEdit.imageUrl);
+      setGroup(taskToEdit.group);
+    }
+  }, [taskToEdit]);
 
   if (!isOpen) return null;
 
@@ -37,7 +47,9 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask 
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
       <div className="bg-gray-800 rounded-2xl p-6 w-full max-w-md">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-bold text-white">Add New Task</h2>
+          <h2 className="text-xl font-bold text-white">
+            {taskToEdit ? 'Edit Task' : 'Add New Task'}
+          </h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-white transition-colors"
@@ -109,7 +121,7 @@ const AddTaskModal: React.FC<AddTaskModalProps> = ({ isOpen, onClose, onAddTask 
             type="submit"
             className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors"
           >
-            Add Task
+            {taskToEdit ? 'Save Changes' : 'Add Task'}
           </button>
         </form>
       </div>
