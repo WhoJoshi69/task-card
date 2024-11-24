@@ -3,7 +3,8 @@ import { Clock, CheckCircle, ArrowRight, Plus, List } from 'lucide-react';
 import TaskCard from './components/TaskCard';
 import AddTaskModal from './components/AddTaskModal';
 import TaskList from './components/TaskList';
-import { Task } from './types';
+import DailyCheckins from './components/DailyCheckins';
+import { Task, DailyCheckin } from './types';
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -30,6 +31,11 @@ function App() {
     return savedGroups ? JSON.parse(savedGroups) : ['Educational', 'Entertainment', 'Financial', 'Skin Care'];
   });
 
+  const [dailyCheckins, setDailyCheckins] = useState<DailyCheckin[]>(() => {
+    const saved = localStorage.getItem('dailyCheckins');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
   }, [tasks]);
@@ -37,6 +43,10 @@ function App() {
   useEffect(() => {
     localStorage.setItem('taskGroups', JSON.stringify(availableGroups));
   }, [availableGroups]);
+
+  useEffect(() => {
+    localStorage.setItem('dailyCheckins', JSON.stringify(dailyCheckins));
+  }, [dailyCheckins]);
 
   // Get first incomplete task from each group
   const getFirstIncompleteTasks = () => {
@@ -107,11 +117,36 @@ function App() {
     ));
   };
 
+  const handleToggleCheckin = (id: number) => {
+    setDailyCheckins(prev => prev.map(checkin => {
+      if (checkin.id === id) {
+        return {
+          ...checkin,
+          completed: !checkin.completed,
+          lastCompletedDate: !checkin.completed ? new Date().toISOString() : checkin.lastCompletedDate
+        };
+      }
+      return checkin;
+    }));
+  };
+
+  const handleAddCheckin = (checkin: Omit<DailyCheckin, 'id'>) => {
+    setDailyCheckins(prev => [...prev, { ...checkin, id: Date.now() }]);
+  };
+
+  const handleDeleteCheckin = (id: number) => {
+    setDailyCheckins(prev => prev.filter(checkin => checkin.id !== id));
+  };
+
+  const handleEditCheckin = (checkin: DailyCheckin) => {
+    setDailyCheckins(prev => prev.map(c => c.id === checkin.id ? checkin : c));
+  };
+
   const incompleteTasks = getFirstIncompleteTasks();
   const currentTask = incompleteTasks[currentTaskIndex];
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
+    <div className="min-h-screen flex items-center justify-center p-8 gap-6">
       <div className="max-w-2xl w-full">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-white">Task Manager</h1>
@@ -162,6 +197,14 @@ function App() {
           onAddGroup={handleAddGroup}
         />
       </div>
+      
+      <DailyCheckins
+        checkins={dailyCheckins}
+        onToggle={handleToggleCheckin}
+        onAdd={handleAddCheckin}
+        onDelete={handleDeleteCheckin}
+        onEdit={handleEditCheckin}
+      />
     </div>
   );
 }
