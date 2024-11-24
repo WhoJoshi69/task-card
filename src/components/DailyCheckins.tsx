@@ -42,7 +42,7 @@ const DailyCheckins: React.FC<DailyCheckinsProps> = ({
   };
 
   return (
-    <div className="bg-gray-800 rounded-3xl p-6 shadow-xl border border-gray-700 w-80">
+    <div className="bg-gray-800 rounded-3xl p-6 shadow-xl border border-gray-700 w-80 h-full flex flex-col">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-white font-handwriting">Daily Check-ins</h2>
         <button

@@ -5,6 +5,7 @@ import AddTaskModal from './components/AddTaskModal';
 import TaskList from './components/TaskList';
 import DailyCheckins from './components/DailyCheckins';
 import { Task, DailyCheckin } from './types';
+import { motion } from 'framer-motion';
 
 function App() {
   const [tasks, setTasks] = useState<Task[]>(() => {
@@ -35,6 +36,8 @@ function App() {
     const saved = localStorage.getItem('dailyCheckins');
     return saved ? JSON.parse(saved) : [];
   });
+
+  const [showDailyCheckins, setShowDailyCheckins] = useState(true);
 
   useEffect(() => {
     localStorage.setItem('tasks', JSON.stringify(tasks));
@@ -198,13 +201,34 @@ function App() {
         />
       </div>
       
-      <DailyCheckins
-        checkins={dailyCheckins}
-        onToggle={handleToggleCheckin}
-        onAdd={handleAddCheckin}
-        onDelete={handleDeleteCheckin}
-        onEdit={handleEditCheckin}
-      />
+      <motion.div
+        initial={{ x: 0 }}
+        animate={{ x: showDailyCheckins ? 0 : 320 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="fixed right-0 top-0 h-full flex items-center"
+      >
+        <button
+          onClick={() => setShowDailyCheckins(!showDailyCheckins)}
+          className="bg-gray-800 p-2 rounded-l-xl border-l border-y border-gray-700 -ml-3 z-10 hover:bg-gray-700 transition-colors"
+        >
+          <ArrowRight
+            size={20}
+            className={`text-gray-400 transition-transform duration-300 ${
+              showDailyCheckins ? 'rotate-180' : ''
+            }`}
+          />
+        </button>
+        
+        <div className="h-full py-8 pr-8">
+          <DailyCheckins
+            checkins={dailyCheckins}
+            onToggle={handleToggleCheckin}
+            onAdd={handleAddCheckin}
+            onDelete={handleDeleteCheckin}
+            onEdit={handleEditCheckin}
+          />
+        </div>
+      </motion.div>
     </div>
   );
 }
